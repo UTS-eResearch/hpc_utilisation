@@ -1,0 +1,168 @@
+
+<p>Hi</p>
+
+<p>The HPC is occasionally very busy and it is better for all users if we try to improve the 
+throughpout of jobs. Sometimes there are jobs that are requesting more CPU cores (ncpus) than the jobs 
+are capable of using. When you ask for 8 cores and only use 1 core, 7 cores lay idle. 
+Those cores could have been used by other researchers. 
+As an example, a simple python program is single threaded and can only ever use one core.</p> 
+
+<p>In the table below you will see your job(s). Consider the CPU and TIME "Utilisation" columns. 
+For each job those values should be close to 100%. Consider them like your high school reports :-)
+A description of these fields can be found under the table.</p>
+
+</p>If you are going to start a job then please consider how many cores (ncpus) your job really can utilise. 
+During your run use "<code>qstat -f job_id</code>" and after the run "<code>qstat -fx job_id</code>" 
+to see if your job used the cores that you requested. The same can be done for memory and walltime. 
+Do not ask for more than your job requires.</p>
+
+<p>If you have any questions just email me and I'll try to assist.</p>
+<p>Running Jobs</p><table border=1 cellpadding=4>
+<tr>
+<th>Job ID</th>
+<th>Job Owner</th>
+<th>Job Name</th>
+<th>Select Statement</th>
+<th>ncpus</th>
+<th>cpu%</th>
+<th>cputime</th>
+<th>walltime</th>
+<th>CPU<br>Utilisation</th>
+<th>TIME<br>Utilisation</th>
+<th>Comment</th>
+</tr>
+<tr>
+  <td>313295</td>
+  <td>u1234</td>
+  <td>PF_NEM_2019_pbs.pbs</td>
+  <td>1:ncpus=1:mpiprocs=1</td>
+  <td>1</td>
+  <td>98</td>
+  <td>    766.1</td>
+  <td>     768.6</td>
+  <td>     98.0%</td>
+  <td>      99.7%</td>
+  <td><span style="color:green;">Good</span></td>
+</tr>
+<tr>
+  <td>313296</td>
+  <td>u1234</td>
+  <td>PF_NEM_2019_pbs.pbs</td>
+  <td>1:ncpus=1:mpiprocs=1</td>
+  <td>1</td>
+  <td>98</td>
+  <td>    766.0</td>
+  <td>     768.6</td>
+  <td>     98.0%</td>
+  <td>      99.7%</td>
+  <td><span style="color:green;">Good</span></td>
+</tr>
+<tr>
+  <td>313300</td>
+  <td>u1234</td>
+  <td>PF_NEM_2019_pbs.pbs</td>
+  <td>1:ncpus=1:mpiprocs=1</td>
+  <td>1</td>
+  <td>98</td>
+  <td>    766.0</td>
+  <td>     768.6</td>
+  <td>     98.0%</td>
+  <td>      99.7%</td>
+  <td><span style="color:green;">Good</span></td>
+</tr>
+<tr>
+  <td>313302</td>
+  <td>u1234</td>
+  <td>PF_NEM_2019_pbs.pbs</td>
+  <td>1:ncpus=1:mpiprocs=1</td>
+  <td>1</td>
+  <td>99</td>
+  <td>    765.9</td>
+  <td>     768.6</td>
+  <td>     99.0%</td>
+  <td>      99.7%</td>
+  <td><span style="color:green;">Good</span></td>
+</tr>
+<tr>
+  <td>313303</td>
+  <td>u1234</td>
+  <td>PF_NEM_2019_pbs.pbs</td>
+  <td>1:ncpus=1:mpiprocs=1</td>
+  <td>1</td>
+  <td>99</td>
+  <td>    766.1</td>
+  <td>     768.6</td>
+  <td>     99.0%</td>
+  <td>      99.7%</td>
+  <td><span style="color:green;">Good</span></td>
+</tr>
+<tr>
+  <td>450182</td>
+  <td>u2468</td>
+  <td>STDIN</td>
+  <td>1:ncpus=10:mem=100gb</td>
+  <td>10</td>
+  <td>328</td>
+  <td>      0.5</td>
+  <td>       6.6</td>
+  <td>     32.8%</td>
+  <td>       0.7%</td>
+  <td><span style="color:red;">CHECK !</span></td>
+</tr>
+<tr>
+  <td>450473</td>
+  <td>u2468</td>
+  <td>test</td>
+  <td>1:mem=150gb:ncpus=15</td>
+  <td>15</td>
+  <td>176</td>
+  <td>      1.5</td>
+  <td>       0.9</td>
+  <td>     11.7%</td>
+  <td>      11.3%</td>
+  <td><span style="color:red;">CHECK !</span></td>
+</tr>
+<tr>
+  <td>450184</td>
+  <td>u1359</td>
+  <td>STDIN</td>
+  <td>1:ncpus=10:mem=100gb</td>
+  <td>10</td>
+  <td>32</td>
+  <td>      0.1</td>
+  <td>       6.1</td>
+  <td>      3.2%</td>
+  <td>       0.1%</td>
+  <td><span style="color:red;">CHECK !</span></td>
+</tr>
+<tr>
+  <td>449969</td>
+  <td>u1359</td>
+  <td>EGONAV-RL-Collision-Back</td>
+  <td>1:mem=150gb:ncpus=8:</td>
+  <td>8</td>
+  <td>345</td>
+  <td>    134.7</td>
+  <td>      42.8</td>
+  <td>     43.1%</td>
+  <td>      39.3%</td>
+  <td><span style="color:red;">CHECK !</span></td>
+</tr>
+</table>
+<p>HPC Utilisation Report created on 2021-10-25 at 04:38 PM from program <code>check_utilisation.py running</code></p>
+
+<p>What is "cpu%" ? <br>
+The PBS scheduler polls all jobs every few minutes and calculates an integer
+value called "cpupercent" at each polling cycle. This is a moving weighted average
+of CPU usage for the cycle, given as the average percentage usage of one CPU.
+For example, a value of 50 means that during a certain period, the job used 50
+percent of one CPU. A value of 300 means that during the period, the job used
+an average of three CPUs. You can find the cpupercent used from the <code>qstat</code> command.
+</p>
+
+<p>What is "CPU Utilisation %" ? <br>
+This is what I have calculated. It's the cpupercent / ncpus requested.<br>
+If you ask for 1 core and use it fully then this will be close to 100%. <br>
+If you ask for 3 cores and use all of those then this will be 300%/3 = 100% again. <br>
+If you ask for 3 cores and use 1 core it will be about 33%. You do not get a pass mark :-)  
+</p>
