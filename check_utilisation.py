@@ -48,10 +48,9 @@ import smtplib
 pbs_server = 'hpcnode0'
 
 # Name of the users database. The "public" one has some fields removed. This is because 
-# we plan to make this script and database available to users under /usr/local/bin/.
+# this script and the database is available to users under /usr/local/bin/.
 # Do not use the full path here. It needs to reside in the same directory as this script.
-#users_db_name = 'users_ldap_public.db'
-users_db_name = 'users_ldap.db'
+users_db_name = 'users_ldap_public.db'
 
 # Target utilisation in percent. Anything below this will be tagged with "CHECK".
 target = 80
