@@ -42,11 +42,10 @@ Running with the `-u` option will limit results to a specific user.
 
 ## Files
 
-    check_utilisation.py    The main pbsweb application.
-    
-    pbs/pbsutils.py             Module containing utility functions for the pbsweb application.
-    pbs/swig_compile_pbs.sh     Run this to create _pbs.so
-    pbs/pbs.i                   Used by swig_compile_pbs.sh
+    check_utilisation.py      The main pbsweb application.
+    pbs/pbsutils.py           Module containing utility functions for the pbsweb application.
+    pbs/swig_compile_pbs.sh   Run this to create _pbs.so
+    pbs/pbs.i                 Used by swig_compile_pbs.sh
 
 ## Software Required
 
@@ -62,7 +61,7 @@ Running with the `-u` option will limit results to a specific user.
 The `pbs_ifl.h` is not included in this code as you should use the version that
 came with your PBS installation. 
 Once you have found this file copy it to the location on the login
-node where you will later run `swig_compile_pbs.sh` from.
+node where you will later run `swig_compile_pbs.sh` from i.e. the `pbs` directory.
 
 The openssl-devel package provides the libs to link with in the swig compile script 
 i.e. "`.. -lcrypto -lssl`".
@@ -111,8 +110,8 @@ Now you should be able to run the utilisation script:
 
 ## The User Database
 
-In the Python code the `users_db_name` is a small sqlite database that just contains user information.
-This is not included with this repo. The schema is:
+In the Python code the `users_db_name` is a small sqlite database that just contains user information 
+for our site at UTS. This is not included with this repo. The schema is:
 
     $ echo '.schema' | sqlite3 users_ldap_public.db
     CREATE TABLE IF NOT EXISTS "users" ( 'id' INTEGER NOT NULL, 'uts_id' TEXT NOT NULL, 'uts_email' TEXT, 'name' TEXT, PRIMARY KEY('id'));
