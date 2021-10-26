@@ -34,16 +34,83 @@ like this:
       ./check_utilisation.py running -e your_email
 
 
+
+## Files
+
+    check_utilisation.py    The main pbsweb application.
+    
+    pbs/pbsutils.py             Module containing utility functions for the pbsweb application.
+    pbs/swig_compile_pbs.sh     Run this to create _pbs.so
+    pbs/pbs.i                   Used by swig_compile_pbs.sh
+
+## Software Required
+
+* PBS Professional commercial or open source. 
+  You will need the file `pbs_ifl.h` from your PBS installation.
+* gcc
+* openssl-devel
+* SWIG - Software Wrapper and Interface Generator
+* Python 3.8 development packages
+
+## Installation Notes
+
+The `pbs_ifl.h` is not included in this code as you should use the version that
+came with your PBS installation. 
+Once you have found this file copy it to the location on the login
+node where you will later run `swig_compile_pbs.sh` from.
+
+The openssl-devel package provides the libs to link with in the swig compile script 
+i.e. "`.. -lcrypto -lssl`".
+
+    $ sudo yum install openssl-devel
+
+The SWIG package (swig) needs to be installed. 
+SWIG stands for Software Wrapper and Interface Generator and allows us to 
+create a python module that allows python scripts to run PBS commands.
+You will also need the PBS `pbs_ifl.h` file that comes with your PBS. 
+
+    $ sudo yum install swig
+
+Edit the shell script `swig_compile.sh` and ensure that the variables at the
+top (especially `PYTHON_INCL`) are appropriate for your installation, then run the script. 
+
+    $ cd pbs
+    $ ./swig_compile_pbs.sh
+    $ cd ..
+
+There will be no output if all goes well.
+
+The above script runs `swig` which uses the SWIG interface file `pbs.i` to
+create `pbs.py` and `pbs_wrap.c`. Then it uses `gcc` to compile `pbs_wrap.c` 
+to create `_pbs.so`. The swig generated `pbs.py` imports `_pbs.so` at run time.
+
+Now you should be able to run the utilisation script:
+
+    $ ./check_utilisation.py -h
+    usage: check_utilisation.py  running|finished|all  [-h] [-u USER] [-e EMAIL]
+    
+    Check Your HPC Utilisation
+    
+    positional arguments:
+      {running,finished,all}
+                            Select one job state to report on.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -u USER, --user USER  Only show jobs for this user.
+      -e EMAIL, --email EMAIL
+                            Email a copy of this report to yourself.
+
 ## The User Database
 
 In the Python code the `users_db_name` is a small sqlite database that just contains user information.
-The schema is:
+This is not included with this repo. The schema is:
 
     $ echo '.schema' | sqlite3 users_ldap_public.db
     CREATE TABLE IF NOT EXISTS "users" ( 'id' INTEGER NOT NULL, 'uts_id' TEXT NOT NULL, 'uts_email' TEXT, 'name' TEXT, PRIMARY KEY('id'));
 
-You may wish to modify the code to pull such information from another source.
+You will probably need to modify the code to pull such information from another source.
 
 Mike Lake        
-eResearch UTS
-
+eResearch UTS     
+October 2021
