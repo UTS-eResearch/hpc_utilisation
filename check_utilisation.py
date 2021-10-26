@@ -67,7 +67,7 @@ html_output = 'check_utilisation.html'
 from_email = 'YourEmail@example.com'
 
 # Your login nodes mail server.
-mail_server='postoffice.example.com'
+mail_server = 'postoffice.example.com'
 
 prefix = '''
 <p>Hi</p>
