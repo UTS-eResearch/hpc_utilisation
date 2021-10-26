@@ -64,10 +64,10 @@ past_days = 5
 html_output = 'check_utilisation.html'
 
 # This line must be set to your email address.
-from_email = 'Mike.Lake@uts.edu.au'
+from_email = 'YourEmail@example.com'
 
 # Your login nodes mail server.
-mail_server='postoffice.uts.edu.au'
+mail_server='postoffice.example.com'
 
 prefix = '''
 <p>Hi</p>
@@ -340,7 +340,7 @@ def main():
     parser = argparse.ArgumentParser(\
         description='Check Your HPC Utilisation', \
         usage="%(prog)s  running|finished|all  [-h] [-u USER] [-e EMAIL]", \
-        epilog='Contact Mike.Lake@uts.edu.au for further help.', \
+        epilog='Contact %s for further help.' % from_email, \
     ) 
 
     parser.add_argument('state', choices=['running','finished','all'], default='running', \
