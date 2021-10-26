@@ -1,6 +1,6 @@
-# hpc_utilisation
+# HPC Utilisation Script
 
-Python program to check the utilisation of HPC jobs using the PBS schedular.
+Python program to check the utilisation of HPC jobs using the PBS scheduler.
 
 ## Usage
 
@@ -9,6 +9,8 @@ If you run the program with no args you will get brief usage information:
     $ ./check_utilisation.py 
     usage: check_utilisation.py  running|finished|all  [-h] [-u USER] [-e EMAIL]
     check_utilisation.py: error: the following arguments are required: state
+
+Running with the `-h` option will give more detailed help: `$ ./check_utilisation.py -h` 
 
 You need to specify a "job state" to query; either "running", "finished" or "all" 
 like this:
@@ -33,7 +35,10 @@ like this:
     To rerun this, and email this report to yourself, run this command:
       ./check_utilisation.py running -e your_email
 
+This will also have written a HTML page with the above information. You can email yourself 
+a HTML formatted emailo with this information by using the `-e` option.
 
+Running with the `-u` option will limit results to a specific user. 
 
 ## Files
 
@@ -83,6 +88,9 @@ There will be no output if all goes well.
 The above script runs `swig` which uses the SWIG interface file `pbs.i` to
 create `pbs.py` and `pbs_wrap.c`. Then it uses `gcc` to compile `pbs_wrap.c` 
 to create `_pbs.so`. The swig generated `pbs.py` imports `_pbs.so` at run time.
+
+Now edit `check_utilisation.py` and fill in the required parameters for your site 
+i.e. the `from_email` and the `mail_server` settings.
 
 Now you should be able to run the utilisation script:
 
