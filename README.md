@@ -91,7 +91,7 @@ to create `_pbs.so`. The swig generated `pbs.py` imports `_pbs.so` at run time.
 Now edit `check_utilisation.py` and fill in the required parameters for your site 
 i.e. the `from_email` and the `mail_server` settings.
 
-Now you should be able to run the utilisation script:
+Now you should be able to run the utilisation script from this directory:
 
     $ ./check_utilisation.py -h
     usage: check_utilisation.py  running|finished|all  [-h] [-u USER] [-e EMAIL]
@@ -108,6 +108,10 @@ Now you should be able to run the utilisation script:
       -e EMAIL, --email EMAIL
                             Email a copy of this report to yourself.
 
+If you wish to install the script somewhere else, e.g. under `/usr/local/bin/`
+then just copy the script to under `/usr/local/bin/` plus you will need the 
+directory `/usr/local/bin/pbs/` containing `pbs.py`, `_pbs.so` and `pbsutils.py`. 
+ 
 ## The User Database
 
 In the Python code the `users_db_name` is a small sqlite database that just contains user information 
