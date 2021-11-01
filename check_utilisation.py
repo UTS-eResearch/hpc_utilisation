@@ -3,14 +3,14 @@
 
 '''
 This script checks the utilisation of HPC jobs.
-Run the program to get help on usage.
+Run the program with -h or --help to get help on usage.
 
 Note to installers: 
 1. This program should be installed on just the login node under /opt/eresearch/
 2. The public version of the users database needs to be updated every time the
    main database is updated.
 
-Notes:
+Notes to myself:
 Cannot use job key 'euser'from pbs_connect(pbs_server):
   At first I was using job['euser'] from the jobs returned from PBS to get the user 
   running the job. It turns out that this key is only available to PBS admin users 
@@ -21,14 +21,20 @@ Cannot use job key 'euser'from pbs_connect(pbs_server):
 
 Author: Mike Lake
 Releases: 
-2021-04-29 First release.
+  2021-04-29 First release.
+  2021-11-01 Use docopt arg parsing instead or argparse. Had to add a virtualenv for this.
 
 '''
 
-import argparse
+# Load python from this virtual environment and unload the system python.
+activate_this_file = "/opt/eresearch/virtualenvs/hpc_py3/bin/activate_this.py"
+with open(activate_this_file) as f:
+    exec(f.read(), dict(__file__=activate_this_file))
+
 import sys, os, re
 import pwd
 import datetime
+from docopt import docopt
 
 # Append what ever pbs directory is under the directory that this script is located
 # in. This ensures that we use /opt/eresearch/pbs for the version used by users and 
@@ -67,6 +73,23 @@ from_email = 'YourEmail@example.com'
 
 # Your login nodes mail server.
 mail_server = 'postoffice.example.com'
+
+# The programs usage comes from this string being parsed by docopt.
+usage_doc = '''
+Check Your HPC Utilisation
+
+Usage: 
+  check_utilisation.py running  [-e <email>] [-u user]
+  check_utilisation.py finished 
+  check_utilisation.py all
+  check_utilisation.py -h | --help
+
+Options:
+  -e, --email <email>    Email a copy of this report to yourself.
+  -u, --user  <user>     Only show jobs for this user.
+
+For further help contact the author: Mike.Lake@uts.edu.au
+'''
 
 prefix = '''
 <p>Hi</p>
@@ -334,23 +357,10 @@ def main():
     ##################################################
     # Check program args and access to required files.
     ##################################################
-
-    # I have replaced the default help's message with a clearer one.
-    parser = argparse.ArgumentParser(\
-        description='Check Your HPC Utilisation', \
-        usage="%(prog)s  running|finished|all  [-h] [-u USER] [-e EMAIL]", \
-        epilog='Contact %s for further help.' % from_email, \
-    ) 
-
-    parser.add_argument('state', choices=['running','finished','all'], default='running', \
-        help='Select one job state to report on.')
-    parser.add_argument('-u', '--user', help='Only show jobs for this user.')
-    parser.add_argument('-e', '--email', help='Email a copy of this report to yourself.')
-   
-    args = parser.parse_args()
-    state = args.state
-    user_id = args.user
-    recipient_email = args.email
+    args = docopt(usage_doc, argv=None, help=True, version=None, options_first=False)
+ 
+    user_id = None
+    recipient_email = None
 
     # Check that we can access the HPC user database.
     dirpath = os.path.dirname(sys.argv[0])
@@ -375,7 +385,7 @@ def main():
 
     conn = pbs.pbs_connect(pbs_server)
 
-    if state == 'running':
+    if args['running']:
         # This will get just current jobs; queued, running, and exiting.
         # We have added the 't' to also include current array jobs.
         jobs = get_jobs(conn, extend='t')
@@ -390,7 +400,7 @@ def main():
         # This will also remove array parent jobs as they are state 'B".
         jobs = [j for j in jobs if j['job_state'] == 'R']
         print('Found %d running jobs out of %d total jobs.' % (len(jobs), total))
-    elif state == 'finished':
+    elif args['finished']:
         # This will get ALL jobs, current and finished.
         jobs = get_jobs(conn, extend='xt')
         total = len(jobs)
@@ -416,7 +426,7 @@ def main():
 
         jobs = jobs_tmp
         print('Found %d finished jobs from last %d days.' % (len(jobs), past_days))
-    elif state == 'all':
+    elif args['all']:
         # This will get ALL jobs, current and finished.
         jobs = get_jobs(conn, extend='xt')
         total = len(jobs)
@@ -440,7 +450,7 @@ def main():
 
     else:
         # We should never get here.
-        print("Invalid state %s" % state)
+        print("Invalid positional argument.")
         sys.exit()
 
     pbs.pbs_disconnect(conn)
@@ -466,17 +476,17 @@ def main():
         sys.exit()
     fh.write(prefix)
 
-    if state == 'running':
+    if args['running']:
         fh.write("<p>Running Jobs</p>")
         fh.write(print_table_start())
         print_jobs(jobs, fh)
         fh.write(print_table_end())
-    elif state == 'finished':
+    elif args['finished']:
         fh.write("<p>Finished Jobs</p>")
         fh.write(print_table_start())
         print_jobs(jobs, fh)
         fh.write(print_table_end())
-    elif state == 'all':
+    elif args['all']:
         # Write the running jobs.
         fh.write("<a name='finished'/>")
         fh.write("<p><b>Finished Jobs</b> - Go to list of <a href='#running'>running jobs</a></p>")
@@ -493,7 +503,7 @@ def main():
         fh.write(print_table_end())
     else:
         # We should never get here.
-        print("Invalid state %s" % state)
+        print("Invalid positional argument." )
 
     fh.write(postfix)
     fh.close()
