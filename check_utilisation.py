@@ -531,7 +531,8 @@ def main():
     # Get the UTS email of the user that is running this program.
     # Note that for admins with a local account this will be None.
     this_user_email = get_user_email(users_db_path, this_user)
-    
+
+    # This gets how this program was invoked as a string.
     invocation = ' '.join([str(s) for s in sys.argv])
 
     # Now print this information to the screen.
