@@ -79,14 +79,14 @@ usage_doc = '''
 Check Your HPC Utilisation
 
 Usage: 
-  check_utilisation.py running  [-e <email>] [-u user]
-  check_utilisation.py finished 
-  check_utilisation.py all
+  check_utilisation.py running  [-e <email>] [-u <user> ]
+  check_utilisation.py finished [-e <email>] [-u <user> ]
+  check_utilisation.py all      [-e <email>] [-u <user> ]
   check_utilisation.py -h | --help
 
 Options:
-  -e, --email <email>    Email a copy of this report to yourself.
-  -u, --user  <user>     Only show jobs for this user.
+  -e <email>    Email a copy of this report to yourself.
+  -u <user>     Only show jobs for this user.
 
 For further help contact the author: Mike.Lake@uts.edu.au
 '''
@@ -359,8 +359,15 @@ def main():
     ##################################################
     args = docopt(usage_doc, argv=None, help=True, version=None, options_first=False)
  
-    user_id = None
-    recipient_email = None
+    if args['-u']: 
+        user_id = args['-u']
+    else:
+        user_id = None
+
+    if args['-e']: 
+        recipient_email = args['-e']
+    else:
+        recipient_email = None
 
     # Check that we can access the HPC user database.
     dirpath = os.path.dirname(sys.argv[0])
