@@ -19,7 +19,22 @@ Cannot use job key 'euser'from pbs_connect(pbs_server):
   You need to use 'job_owner' as a key. The attribute job['euser'] is like u999777 
   while j['job_owner'] is u999777@hpcnode1 where the last part is the login node name.
 
-Author: Mike Lake
+License
+
+HPC Utilisation is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later version.
+
+HPC Utilisation is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along with Foobar. 
+If not, see <https://www.gnu.org/licenses/>. 
+
+Copyright 2021 Mike Lake
+
 Releases: 
   2021-04-29 First release.
   2021-11-01 Use docopt arg parsing instead or argparse. Had to add a virtualenv for this.
