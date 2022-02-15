@@ -21,6 +21,8 @@ Cannot use job key 'euser'from pbs_connect(pbs_server):
 
 License
 
+Copyright 2021 Mike Lake
+
 HPC Utilisation is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the Free Software
 Foundation, either version 3 of the License, or (at your option) any later version.
@@ -33,9 +35,8 @@ details.
 You should have received a copy of the GNU General Public License along with Foobar. 
 If not, see <https://www.gnu.org/licenses/>. 
 
-Copyright 2021 Mike Lake
+Releases
 
-Releases: 
   2021-04-29 First release.
   2021-11-01 Use docopt arg parsing instead or argparse. Had to add a virtualenv for this.
 
