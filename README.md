@@ -10,7 +10,7 @@ If you run the program with no args you will get brief usage information:
     usage: check_utilisation.py  running|finished|all  [-h] [-u USER] [-e EMAIL]
     check_utilisation.py: error: the following arguments are required: state
 
-Running with the `-h` option will give more detailed help: `$ ./check_utilisation.py -h` 
+Running with the `-h` option will give more detailed help: `$ ./check_utilisation.py -h`
 
 You need to specify a "job state" to query; either "running", "finished" or "all" 
 like this:
