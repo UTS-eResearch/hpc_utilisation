@@ -66,14 +66,14 @@ node where you will later run `swig_compile_pbs.sh` from i.e. the `pbs` director
 The openssl-devel package provides the libs to link with in the swig compile script 
 i.e. "`.. -lcrypto -lssl`".
 
-    $ sudo yum install openssl-devel
+    $ sudo dnf install openssl-devel
 
 The SWIG package (swig) needs to be installed. 
 SWIG stands for Software Wrapper and Interface Generator and allows us to 
 create a python module that allows python scripts to run PBS commands.
 You will also need the PBS `pbs_ifl.h` file that comes with your PBS. 
 
-    $ sudo yum install swig
+    $ sudo dnf install swig
 
 Edit the shell script `swig_compile.sh` and ensure that the variables at the
 top (especially `PYTHON_INCL`) are appropriate for your installation, then run the script. 
