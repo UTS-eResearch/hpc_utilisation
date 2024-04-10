@@ -1,11 +1,13 @@
 # HPC Utilisation Script
 
 Python program to check the utilisation of HPC jobs using the PBS scheduler.
+This programs needs to run on the HPC login node.
 
 ## Usage
 
 If you run the program with no args you will get brief usage information:
 
+    hpcnode01$
     $ ./check_utilisation.py 
     usage: check_utilisation.py  running|finished|all  [-h] [-u USER] [-e EMAIL]
     check_utilisation.py: error: the following arguments are required: state
@@ -36,7 +38,7 @@ like this:
       ./check_utilisation.py running -e your_email
 
 This will also have written a HTML page with the above information. You can email yourself 
-a HTML formatted emailo with this information by using the `-e` option.
+a HTML formatted email with this information by using the `-e` option.
 
 Running with the `-u` option will limit results to a specific user. 
 
