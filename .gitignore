@@ -6,9 +6,6 @@ check_utilisation.html
 # Sqlite3 database containing user information.
 *.db
 
-# Provided by PBS
-pbs_ifl.h*
-
 # These are created by swig and gcc
 pbs.py
 _pbs.so
