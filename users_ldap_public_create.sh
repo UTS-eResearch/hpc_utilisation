@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Create users_ldap_public.db with less fields.
-# This database is used by the program: check_utilisation.py
+# Create a copy of the HPC users database from the current production one but
+# with less fields. This database is used by the program: check_utilisation.py
 
 # In sqlite you cannot remove columns. The way to remove a column is to copy
 # the existing database to a new database, and create a new table, with just
@@ -14,7 +14,7 @@ db_in="users_ldap.db"
 db_out="users_ldap_public.db"
 
 if [ ! -f $db_in ]; then
-    echo "Missing input databae, $db_in, so exiting."
+    echo "Missing input database, $db_in, so exiting."
     exit 0
 fi
 
