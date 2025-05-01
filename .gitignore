@@ -1,7 +1,7 @@
 # git ignore
 
 # Output file.
-check_utilisation.html
+utilisation.html
 
 # Sqlite3 database containing user information.
 *.db

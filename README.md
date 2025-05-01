@@ -32,7 +32,7 @@ like this:
        450184    u2468            STDIN  1:ncpus=10:mem=100gb    10    32      0.1       6.6      3.2%       0.1%  CHECK !
        449969    u1122  EGONAV-RL-Colli  1:mem=150gb:ncpus=8:     8   345    136.4      43.4     43.1%      39.3%  CHECK !
     
-    Wrote report check_utilisation.html 
+    Wrote report utilisation.html 
     
     To rerun this, and email this report to yourself, run this command:
       ./check_utilisation.py running -e your_email

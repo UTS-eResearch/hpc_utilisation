@@ -82,7 +82,7 @@ target = 80
 past_days = 5
 
 # Filename for the HTML output file.
-html_output = 'check_utilisation.html'
+html_output = 'utilisation.html'
 
 # This line must be set to your email address.
 from_email = 'YourEmail@example.com'
