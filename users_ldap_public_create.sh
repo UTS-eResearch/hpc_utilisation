@@ -12,11 +12,12 @@
 cp users_ldap.db users_ldap_public.db
 
 # Create a new table.
-SQL="CREATE TABLE IF NOT EXISTS 'users_public' ( 'id' INTEGER NOT NULL, 'uts_id' TEXT NOT NULL, 'uts_email' TEXT, 'name' TEXT, PRIMARY KEY('id'));"
+SQL="CREATE TABLE IF NOT EXISTS 'users_public' ('id' INTEGER NOT NULL, 'uts_id' TEXT NOT NULL, 'uts_email' TEXT, 'name' TEXT, PRIMARY KEY('id'));"
 echo "$SQL" | sqlite3 users_ldap_public.db
 
 # Copy the data from the old table into the new table.
-SQL="INSERT INTO users_public SELECT id, uts_id, uts_email, name FROM users;"
+# Note we only copy across current, valid users.
+SQL="INSERT INTO users_public SELECT id, uts_id, uts_email, name FROM users where status=2;"
 echo "$SQL" | sqlite3 users_ldap_public.db
 
 # Drop the old table.
