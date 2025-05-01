@@ -119,8 +119,13 @@ directory `/usr/local/bin/pbs/` containing `pbs.py`, `_pbs.so` and `pbsutils.py`
 In the Python code the `users_db_name` is a small sqlite database that just contains user information 
 for our site at UTS. This is not included with this repo. The schema is:
 
-    $ echo '.schema' | sqlite3 users_ldap_public.db
-    CREATE TABLE IF NOT EXISTS "users" ( 'id' INTEGER NOT NULL, 'uts_id' TEXT NOT NULL, 'uts_email' TEXT, 'name' TEXT, PRIMARY KEY('id'));
+    CREATE TABLE IF NOT EXISTS "users" ( 
+        'id' INTEGER NOT NULL, 
+        'uts_id' TEXT NOT NULL, 
+        'uts_email' TEXT, 
+        'name' TEXT, 
+        PRIMARY KEY('id')
+    );
 
 You will probably need to modify the code to pull such information from another source.
 
