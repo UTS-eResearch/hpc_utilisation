@@ -43,7 +43,7 @@ Releases
 '''
 
 # Load python from this virtual environment and unload the system python.
-activate_this_file = "/opt/eresearch/virtualenvs/hpc_py3/bin/activate_this.py"
+activate_this_file = "/opt/eresearch/virtualenvs/hpc_utilisation/bin/activate_this.py"
 with open(activate_this_file) as f:
     exec(f.read(), dict(__file__=activate_this_file))
 
