@@ -1,8 +1,13 @@
 #!/bin/bash
 
 # Installs the check_utilisation.py Python script and its dependencies.
+# TODO This would be placed in /usr/local/bin so it can be run by users 
+# but it is still being worked on so its not installed for now.
 #
 # Usage: ./install_check_utilisation.sh
+#
+# Author: Mike Lake
+# Date: 2020
 
 # Set here the location of where the script will be installed to.
 # The "pbs" directory will be installed under here as well.
