@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# This script checks the utilisation of HPC jobs.
 
 '''
 This script checks the utilisation of HPC jobs.
 Run the program with -h or --help to get help on usage.
 
-Note to installers: 
+Note to installers:
 1. This program should be installed on just the login node under /opt/eresearch/
 2. The public version of the users database needs to be updated every time the
    main database is updated.
 
-Notes to myself:
-Cannot use job key 'euser'from pbs_connect(pbs_server):
-  At first I was using job['euser'] from the jobs returned from PBS to get the user 
-  running the job. It turns out that this key is only available to PBS admin users 
+Notes:
+Cannot use job key 'euser' from pbs_connect(pbs_server):
+  At first I was using job['euser'] from the jobs returned from PBS to get the user
+  running the job. It turns out that this key is only available to PBS admin users
   and not ordinary users. If you do a "qstat -f job_id" of a job as a PBS admin and
-  as a user you will see that a few attributes are missing to users. 
-  You need to use 'job_owner' as a key. The attribute job['euser'] is like u999777 
+  as a user you will see that a few attributes are missing to users.
+  You need to use 'job_owner' as a key. The attribute job['euser'] is like u999777
   while j['job_owner'] is u999777@hpcnode1 where the last part is the login node name.
+
+Author: Mike Lake
 
 License
 
@@ -51,9 +54,10 @@ import sys, os, re
 import pwd
 import datetime
 from docopt import docopt
+# import argparse
 
 # Append what ever pbs directory is under the directory that this script is located
-# in. This ensures that we use /opt/eresearch/pbs for the version used by users and 
+# in. This ensures that we use /opt/eresearch/pbs for the version used by users and
 # whatever pbs is under this script if its a development version.
 sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), 'pbs'))
 
@@ -69,7 +73,7 @@ import smtplib
 # You need to set the hostname of the PBS Server
 pbs_server = 'hpcnode0'
 
-# Name of the users database. The "public" one has some fields removed. This is because 
+# Name of the users database. The "public" one has some fields removed. This is because
 # this script and the database is available to users under /usr/local/bin/.
 # Do not use the full path here. It needs to reside in the same directory as this script.
 users_db_name = 'users_ldap_public.db'
@@ -82,13 +86,13 @@ target = 80
 past_days = 5
 
 # Filename for the HTML output file.
-html_output = 'utilisation.html'
+html_output = 'check_utilisation.html'
 
 # This line must be set to your email address.
-from_email = 'YourEmail@example.com'
+from_email = 'Mike.Lake@uts.edu.au'
 
 # Your login nodes mail server.
-mail_server = 'postoffice.example.com'
+mail_server = 'postoffice.uts.edu.au'
 
 # The programs usage comes from this string being parsed by docopt.
 usage_doc = '''
@@ -110,20 +114,20 @@ For further help contact the author: Mike.Lake@uts.edu.au
 prefix = '''
 <p>Hi</p>
 
-<p>The HPC is occasionally very busy and it is better for all users if we try to improve the 
-throughpout of jobs. Sometimes there are jobs that are requesting more CPU cores (ncpus) than the jobs 
-are capable of using. When you ask for 8 cores and only use 1 core, 7 cores lay idle. 
-Those cores could have been used by other researchers. 
-As an example, a simple python program is single threaded and can only ever use one core.</p> 
+<p>The HPC is occasionally very busy and it is better for all users if we try to improve the
+throughpout of jobs. Sometimes there are jobs that are requesting more CPU cores (ncpus) than
+the jobs are capable of using. When you ask for 8 cores and only use 1 core, 7 cores lay idle.
+Those cores could have been used by other researchers.
+As an example, a simple python program is single threaded and can only ever use one core.</p>
 
-<p>In the table below you will see your job(s). Consider the CPU and TIME "Utilisation" columns. 
+<p>In the table below you will see your job(s). Consider the CPU and TIME "Utilisation" columns.
 For each job those values should be close to 100%. Consider them like your high school reports :-)
 A description of these fields can be found under the table.</p>
 
-</p>If you are going to start a job then please consider how many cores (ncpus) your job really can utilise. 
-During your run use "<code>qstat -f job_id</code>" and after the run "<code>qstat -fx job_id</code>" 
-to see if your job used the cores that you requested. The same can be done for memory and walltime. 
-Do not ask for more than your job requires.</p>
+</p>If you are going to start a job then please consider how many cores (ncpus) your job
+really can utilise. During your run use "<code>qstat -f job_id</code>" and after the run
+"<code>qstat -fx job_id</code>" to see if your job used the cores that you requested.
+The same can be done for memory and walltime. Do not ask for more than your job requires.</p>
 
 <p>If you have any questions just email me and I'll try to assist.</p>
 '''
@@ -135,14 +139,15 @@ value called "cpupercent" at each polling cycle. This is a moving weighted avera
 of CPU usage for the cycle, given as the average percentage usage of one CPU.
 For example, a value of 50 means that during a certain period, the job used 50
 percent of one CPU. A value of 300 means that during the period, the job used
-an average of three CPUs. You can find the cpupercent used from the <code>qstat</code> command.
+an average of three CPUs. You can find the cpupercent used from the
+<code>qstat</code> command.
 </p>
 
 <p>What is "CPU Utilisation %" ? <br>
 This is what I have calculated. It's the cpupercent / ncpus requested.<br>
 If you ask for 1 core and use it fully then this will be close to 100%. <br>
 If you ask for 3 cores and use all of those then this will be 300%/3 = 100% again. <br>
-If you ask for 3 cores and use 1 core it will be about 33%. You do not get a pass mark :-)  
+If you ask for 3 cores and use 1 core it will be about 33%. You do not get a pass mark :-)
 </p>
 '''
 
@@ -165,7 +170,7 @@ def print_table_start():
     also to the HTML output file. The format will be like this:
 
     Job ID  Job Owner  Job Name  Select Statement ncpus  cpu%  cputime  walltime  CPU Util  TIME Util  Comment
-                                                               (hours)   (hours) (percent)  (percent)
+                                                  used         (hours)   (hours) (percent)  (percent)
     '''
 
     # Append tuples of (heading, field width, units)
@@ -173,22 +178,23 @@ def print_table_start():
     heading.append(('Job ID',            9, ' '))
     heading.append(('Job Owner',        11, ' '))
     heading.append(('Job Name',         17, ' '))
-    heading.append(('Select Statement', 22, ' ' ))
-    heading.append(('ncpus',             6, ' ' ))
-    heading.append(('cpu%',              6, ' ' ))
-    heading.append(('cputime',           9, '(hours)' ))
-    heading.append(('walltime',         10, '(hours)' ))
-    heading.append(('CPU Util',         10, '(percent)' ))
-    heading.append(('TIME Util',        11, '(percent)' ))
+    heading.append(('Select Statement', 22, ' '))
+    #heading.append(('ncpus',             6, ' '))     # TODO space or
+    heading.append(('ncpus',             6, 'used'))   # TODO text 'used'
+    heading.append(('cpu%',              6, ' '))
+    heading.append(('cputime',           9, '(hours)'))
+    heading.append(('walltime',         10, '(hours)'))
+    heading.append(('CPU Util',         10, '(percent)'))
+    heading.append(('TIME Util',        11, '(percent)'))
     heading.append(('Comment',           9, ' '))
 
     # Print table heading on one line.
-    for item in heading: 
+    for item in heading:
         print(item[0].rjust(item[1]), end='')
     print('')
 
     # Print units for each table header on the next line.
-    for item in heading: 
+    for item in heading:
         print(item[2].rjust(item[1]), end='')
     print('')
 
@@ -212,8 +218,8 @@ def print_table_end():
     date_time = datetime.datetime.now().strftime('%Y-%m-%d at %I:%M %p')
     # print() take care of converting each element to a string.
     html = '</table>\n'
-    # Create a string being the basename of the program iand then append its args. 
-    # We slice sys.argv as we don't as its first element which is the full path 
+    # Create a string being the basename of the program iand then append its args.
+    # We slice sys.argv as we don't as its first element which is the full path
     # to the program.
     program_name = os.path.basename(sys.argv[0])
     invocation = program_name + ' ' + ' '.join([str(s) for s in sys.argv[1:]])
@@ -250,13 +256,14 @@ def print_jobs(jobs, fh):
         cpu_hours = float(cpu_hours) + float(cpu_mins)/60.0 + float(cpu_secs)/3660.0
         wall_hours = float(wall_hours) + float(wall_mins)/60.0 + float(wall_secs)/3600.0
         # Note: if a job has just started the walltime might be zero and the
-        # calculated wall_hours will be 0. In this case set it to be a small 
+        # calculated wall_hours will be 0. In this case set it to be a small
         # nominal value such as 0.1 hours.
         if wall_hours == 0:
             wall_hours = 0.1
-        
-        # Here we have to cast ncpus to a float so we can perform math operations with the other floats. 
-        # Note: A queued job or an array parent job will not have these attributes set.
+
+        # Here we have to cast ncpus to a float so we can perform math operations
+        # with the other floats. Note: A queued job or an array parent job will
+        # not have these attributes set.
         try:
             ncpus = float(job['resources_used_ncpus'])
         except:
@@ -269,7 +276,7 @@ def print_jobs(jobs, fh):
             time_utilisation = float(100.0*cpu_hours/ncpus/wall_hours)
         except:
             time_utilisation = 0
-        
+
         # The following are still strings so we can use rjust() for formatting.
         # Nor do we need to format them for HTML output.
         print(job['job_id'].rjust(9), end='');                      row.append(job['job_id'])
@@ -288,7 +295,7 @@ def print_jobs(jobs, fh):
         if cpu_utilisation > target and time_utilisation > target:
             # Both CPU utilisation and TIME utilisation are more than our target.
             comment='<span style="color:green;">Good</span>'
-            print ("  Good"); 
+            print ("  Good");
         else:
             comment='<span style="color:red;">CHECK !</span>'
             print ("  CHECK !")
@@ -310,8 +317,8 @@ def get_user_email(users_db_path, user_id):
     user_id = user_id.lstrip('u')
     try:
         con = sqlite.connect(users_db_path)
-    except: 
-        print ("Error: Can\'t connect to the database.") 
+    except:
+        print ("Error: Can\'t connect to the database.")
         sys.exit()
 
     con.row_factory = sqlite.Row
@@ -321,8 +328,8 @@ def get_user_email(users_db_path, user_id):
     cur.close
     con.close
 
-    # We returned row will be a tuple (email,) if the user exists, otherwise 
-    # the row will be None. 
+    # We returned row will be a tuple (email,) if the user exists, otherwise
+    # the row will be None.
     if row is not None:
         email = row[0]
     else:
@@ -332,10 +339,10 @@ def get_user_email(users_db_path, user_id):
 
 def send_email(from_email, recipient_email, message_body):
     '''
-    This takes a "from" email, a "recipient" to send the email to, and 
-    a string "message_body" which has to be a filename of the file 
-    containing the body of the message to send. 
-    The email will be a HTML formatted email because the message body 
+    This takes a "from" email, a "recipient" to send the email to, and
+    a string "message_body" which has to be a filename of the file
+    containing the body of the message to send.
+    The email will be a HTML formatted email because the message body
     is a HTML file.
     '''
 
@@ -347,7 +354,7 @@ MIME-Version: 1.0
 Content-Type: text/html; charset="us-ascii"
 Content-Transfer-Encoding: 7BIT
 Content-Disposition: inline
-    
+
 """ % (from_email, recipient_email)
 
     # Open and read in the file that contains the HTML formatted body of the message.
@@ -363,7 +370,7 @@ Content-Disposition: inline
         try:
             result = session.sendmail(from_email, recipient_email, message)
             print("Sent OK\n")
-        except: 
+        except:
             print("Error sending email.\n")
 
         session.quit()
@@ -380,18 +387,31 @@ def main():
     else:
         user_id = None
 
-    if args['-e']: 
-        recipient_email = args['-e']
-    else:
-        recipient_email = None
+# TODO is this argparse ?
+#    # I have replaced the default help's message with a clearer one.
+#    parser = argparse.ArgumentParser(\
+#        description='Check Your HPC Utilisation', \
+#        usage="%(prog)s  running|finished|all  [-h] [-u USER] [-e EMAIL]", \
+#        epilog='Contact %s for further help.' % from_email, \
+#    )
+#
+#    parser.add_argument('state', choices=['running','finished','all'], default='running', \
+#        help='Select one job state to report on.')
+#    parser.add_argument('-u', '--user', help='Only show jobs for this user.')
+#    parser.add_argument('-e', '--email', help='Email a copy of this report to yourself.')
+#
+#    args = parser.parse_args()
+#    state = args.state
+#    user_id = args.user
+#    recipient_email = args.email
 
     # Check that we can access the HPC user database.
     dirpath = os.path.dirname(sys.argv[0])
     users_db_path = os.path.join(dirpath, users_db_name)
     if not os.path.exists(users_db_path):
         print ("The user database {} can\'t be found." .format(users_db_path))
-        print ("This program needs to be run from the same directory as the user database.") 
-        sys.exit() 
+        print ("This program needs to be run from the same directory as the user database.")
+        sys.exit()
 
     ##########################################################
     # Connect to the PBS server and get the reqested job data.
@@ -401,21 +421,22 @@ def main():
     time_past  = datetime.datetime.now() - datetime.timedelta(days=past_days)
     epoch_past = int(datetime.datetime.timestamp(time_past))
     time_start = datetime.datetime.fromtimestamp(epoch_past)
-        
+
     print("\nChecking utilisation for jobs after", time_start.strftime('%Y-%m-%d %H:%M %p'))
-    if user_id is not None: 
+    if user_id is not None:
         print("Jobs limited to user", user_id)
 
     conn = pbs.pbs_connect(pbs_server)
 
     if args['running']:
+    # if state == 'running':
         # This will get just current jobs; queued, running, and exiting.
         # We have added the 't' to also include current array jobs.
         jobs = get_jobs(conn, extend='t')
         total = len(jobs)
         if user_id is not None:
             # Limit the jobs to just this user.
-            # We take the j['job_owner'] which is like u999777@hpcnode01 and 
+            # We take the j['job_owner'] which is like u999777@hpcnode01 and
             # split it on the @ then take the first part.
             jobs = [j for j in jobs if j['job_owner'].split('@')[0] == user_id]
 
@@ -424,6 +445,7 @@ def main():
         jobs = [j for j in jobs if j['job_state'] == 'R']
         print('Found %d running jobs out of %d total jobs.' % (len(jobs), total))
     elif args['finished']:
+    # elif state == 'finished':
         # This will get ALL jobs, current and finished.
         jobs = get_jobs(conn, extend='xt')
         total = len(jobs)
@@ -435,10 +457,10 @@ def main():
         print('Found %d finished jobs out of %d total jobs in PBS history.' % (len(jobs), total))
 
         # Only keep in the list jobs that finished in the last n days.
-        # Some jobs appear to be missing an stime and etime so we cannot use the line below. 
+        # Some jobs appear to be missing an stime and etime so we cannot use the line below.
         #   jobs = [j for j in jobs if int(j['etime']) > epoch_past]
-        # This should work but does not because sometimes there is an etime but its ''. 
-        # Then the int of '' fails. 
+        # This should work but does not because sometimes there is an etime but its ''.
+        # Then the int of '' fails.
         #  jobs = [j for j in jobs if int(j.get('etime', 0)) > epoch_past]
         # So we will use the for loop below.
         jobs_tmp = []
@@ -450,18 +472,19 @@ def main():
         jobs = jobs_tmp
         print('Found %d finished jobs from last %d days.' % (len(jobs), past_days))
     elif args['all']:
+    #elif state == 'all':
         # This will get ALL jobs, current and finished.
         jobs = get_jobs(conn, extend='xt')
         total = len(jobs)
         if user_id is not None:
             jobs = [j for j in jobs if j['job_owner'].split('@')[0] == user_id]
-        
+
         # Create two lists; jobs that are running and those that are finished.
         jobs_running  = [j for j in jobs if j['job_state'] == 'R']
         jobs_finished = [j for j in jobs if j['job_state'] == 'F']
         print('Found %d running jobs and %d finished jobs, out of %d total jobs in PBS history.' % \
             (len(jobs_running), len(jobs_finished), total))
-        
+
         # Only keep in the finished list those finished in the last n days.
         jobs_tmp = []
         for i in range(len(jobs_finished)):
@@ -473,7 +496,7 @@ def main():
 
     else:
         # We should never get here.
-        print("Invalid positional argument.")
+        print("Invalid state %s" % state)
         sys.exit()
 
     pbs.pbs_disconnect(conn)
@@ -490,26 +513,29 @@ def main():
     jobs = sorted(jobs, key=getKey)
 
     # Write the jobs to a HTML formatted output file.
-    try: 
+    try:
         fh = open(html_output, 'w')
     except:
-        print("I cannot create your HTML report. You are probably are running this script") 
-        print("from a localtion where you do not have permission to write to. Try running") 
+        print("I cannot create your HTML report. You are probably are running this script")
+        print("from a localtion where you do not have permission to write to. Try running")
         print("this script from your home directory.")
         sys.exit()
     fh.write(prefix)
 
     if args['running']:
+    # if state == 'running':
         fh.write("<p>Running Jobs</p>")
         fh.write(print_table_start())
         print_jobs(jobs, fh)
         fh.write(print_table_end())
     elif args['finished']:
+    # elif state == 'finished':
         fh.write("<p>Finished Jobs</p>")
         fh.write(print_table_start())
         print_jobs(jobs, fh)
         fh.write(print_table_end())
     elif args['all']:
+    # elif state == 'all':
         # Write the running jobs.
         fh.write("<a name='finished'/>")
         fh.write("<p><b>Finished Jobs</b> - Go to list of <a href='#running'>running jobs</a></p>")
@@ -526,11 +552,11 @@ def main():
         fh.write(print_table_end())
     else:
         # We should never get here.
-        print("Invalid positional argument." )
+        print("Invalid state %s" % state)
 
     fh.write(postfix)
     fh.close()
-    print('\nWrote report %s ' % html_output) 
+    print('\nWrote report %s ' % html_output)
 
     ###########################################################
     # Show additional information underneath the table of jobs.
@@ -540,7 +566,7 @@ def main():
     # We can use either os.getuid() or os.geteuid() for effective uid.
     this_user = pwd.getpwuid( os.getuid() ).pw_name
 
-    # For debugging you can uncomment this and add in a user 
+    # For debugging you can uncomment this and add in a user
     # that has currently running jobs.
     #this_user = 'uXXXXXX'
 
@@ -557,7 +583,7 @@ def main():
         # We have an email for this user from the user database.
         print('  %s -e %s' % (invocation, this_user_email))
     else:
-        # We do not have an email, as this user was not found in the user database. 
+        # We do not have an email, as this user was not found in the user database.
         # This means they are running this and logged in with a local account i.e.
         # they are an admin user.
         # The admin user can email themselves.
