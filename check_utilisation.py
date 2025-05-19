@@ -45,10 +45,23 @@ Releases
 
 '''
 
-# Load python from this virtual environment and unload the system python.
-activate_this_file = "/opt/eresearch/virtualenvs/hpc_utilisation/bin/activate_this.py"
-with open(activate_this_file) as f:
-    exec(f.read(), dict(__file__=activate_this_file))
+# TODO 
+# We can invoke a specific python interpeter explicitly like this:
+# 
+#  $ source /opt/eresearch/virtualenvs/hpc_utilisation/bin/activate
+#  #!/usr/bin/env python3
+# 
+# or invoke it like this directly:
+#  #!/opt/eresearch/virtualenvs/hpc_utilisation/bin/python3
+#
+# or invoke `activate_this.py` like this:
+## Load python from this virtual environment and unload the system python.
+#activate_this_file = "/opt/eresearch/virtualenvs/hpc_utilisation/bin/activate_this.py"
+#with open(activate_this_file) as f:
+#    #exec(f.read(), dict(__file__=activate_this_file))
+#    #exec(f.read(), {'__file__':activate_this_file})
+#    exec(open(activate_this_file).read(), {'__file__': activate_this_file})
+#    exec(compile(open(activate_this_file, "rb").read(), activate_this_file, 'exec'), dict(__file__=activate_this_file))
 
 import sys, os, re
 import pwd
@@ -60,6 +73,8 @@ from docopt import docopt
 # in. This ensures that we use /opt/eresearch/pbs for the version used by users and
 # whatever pbs is under this script if its a development version.
 sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), 'pbs'))
+#sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), '/shared/homes/mlake/git/hpc_utilisation/pbs'))
+#sys.path.append(os.path.abspath("pbs"))
 
 import pbs
 from pbsutils import get_jobs, job_attributes_reformat
@@ -386,6 +401,8 @@ def main():
         user_id = args['-u']
     else:
         user_id = None
+
+    #sys.exit(0)
 
 # TODO is this argparse ?
 #    # I have replaced the default help's message with a clearer one.
