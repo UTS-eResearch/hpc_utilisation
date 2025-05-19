@@ -115,7 +115,10 @@ mail_server = 'postoffice.uts.edu.au'
 usage_doc = '''
 Check Your HPC Utilisation
 
-Usage: 
+You must specify one mandatory argument of either running or finished or all.
+You may add optional arguments.
+
+Usage:
   check_utilisation.py running  [-e <email>] [-u <user> ]
   check_utilisation.py finished [-e <email>] [-u <user> ]
   check_utilisation.py all      [-e <email>] [-u <user> ]
@@ -399,13 +402,16 @@ def main():
     # Check program args and access to required files.
     ##################################################
     args = docopt(usage_doc, argv=None, help=True, version=None, options_first=False)
- 
-    if args['-u']: 
+
+    if args['-u']:
         user_id = args['-u']
     else:
         user_id = None
 
-    #sys.exit(0)
+    if args['-e']:
+        recipient_email = args['-e']
+    else:
+        recipient_email = None
 
     # Check that we can access the HPC user database.
     dirpath = os.path.dirname(sys.argv[0])
@@ -570,7 +576,7 @@ def main():
 
     # For debugging you can uncomment this and add in a user
     # that has currently running jobs.
-    this_user = 'u950654'
+    #this_user = 'u950654'
 
     # Get the UTS email of the user that is running this program.
     # Note that for admins with a local account this will be None.
@@ -600,8 +606,8 @@ def main():
     # Email a copy of the data as a HTML formatted file.
     ####################################################
 
-    recipient_email = "Mike.Lake@uts.edu.au"
-    this_user_email = "Mike.Lake@uts.edu.au"
+    #recipient_email = "Mike.Lake@uts.edu.au"
+    #this_user_email = "Mike.Lake@uts.edu.au"
     if recipient_email is not None:
         # An optional email address has been provided.
         if this_user_email is not None:
