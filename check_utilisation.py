@@ -105,6 +105,9 @@ html_output = 'check_utilisation.html'
 # This line must be set to your email address.
 from_email = 'Mike.Lake@uts.edu.au'
 
+# This will be None unless set via the command line.
+recipient_email = None
+
 # Your login nodes mail server.
 mail_server = 'postoffice.uts.edu.au'
 
@@ -141,7 +144,8 @@ A description of these fields can be found under the table.</p>
 </p>If you are going to start a job then please consider how many cores (ncpus) your job
 really can utilise. During your run use "<code>qstat -f job_id</code>" and after the run
 "<code>qstat -fx job_id</code>" to see if your job used the cores that you requested.
-The same can be done for memory and walltime. Do not ask for more than your job requires.</p>
+The same can be done for memory and walltime. Just ask for a bit more than what
+you think your job requires.</p>
 
 <p>If you have any questions just email me and I'll try to assist.</p>
 '''
@@ -237,8 +241,8 @@ def print_table_end():
     # to the program.
     program_name = os.path.basename(sys.argv[0])
     invocation = program_name + ' ' + ' '.join([str(s) for s in sys.argv[1:]])
-    html = html + "<p>HPC Utilisation Report created on %s from program <code>%s</code></p>\n" % \
-        (date_time, invocation)
+    html = html + "<p>HPC Utilisation Report created on %s from program:</br>\n" % date_time
+    html = html + "&nbsp;&nbsp;<code>%s</code></p>\n" % invocation
     return html
 
 def print_jobs(jobs, fh):
@@ -566,7 +570,7 @@ def main():
 
     # For debugging you can uncomment this and add in a user
     # that has currently running jobs.
-    #this_user = 'uXXXXXX'
+    this_user = 'u950654'
 
     # Get the UTS email of the user that is running this program.
     # Note that for admins with a local account this will be None.
@@ -596,6 +600,8 @@ def main():
     # Email a copy of the data as a HTML formatted file.
     ####################################################
 
+    recipient_email = "Mike.Lake@uts.edu.au"
+    this_user_email = "Mike.Lake@uts.edu.au"
     if recipient_email is not None:
         # An optional email address has been provided.
         if this_user_email is not None:
