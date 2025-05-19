@@ -67,7 +67,6 @@ import sys, os, re
 import pwd
 import datetime
 from docopt import docopt
-# import argparse
 
 # Append what ever pbs directory is under the directory that this script is located
 # in. This ensures that we use /opt/eresearch/pbs for the version used by users and
@@ -403,24 +402,6 @@ def main():
         user_id = None
 
     #sys.exit(0)
-
-# TODO is this argparse ?
-#    # I have replaced the default help's message with a clearer one.
-#    parser = argparse.ArgumentParser(\
-#        description='Check Your HPC Utilisation', \
-#        usage="%(prog)s  running|finished|all  [-h] [-u USER] [-e EMAIL]", \
-#        epilog='Contact %s for further help.' % from_email, \
-#    )
-#
-#    parser.add_argument('state', choices=['running','finished','all'], default='running', \
-#        help='Select one job state to report on.')
-#    parser.add_argument('-u', '--user', help='Only show jobs for this user.')
-#    parser.add_argument('-e', '--email', help='Email a copy of this report to yourself.')
-#
-#    args = parser.parse_args()
-#    state = args.state
-#    user_id = args.user
-#    recipient_email = args.email
 
     # Check that we can access the HPC user database.
     dirpath = os.path.dirname(sys.argv[0])
