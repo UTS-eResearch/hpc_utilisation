@@ -421,10 +421,10 @@ def main():
         print ("This program needs to be run from the same directory as the user database.")
         sys.exit()
 
-    ##########################################################
-    # Connect to the PBS server and get the reqested job data.
+    ###########################################################
+    # Connect to the PBS server and get the requested job data.
     # We also get some times which we need.
-    ##########################################################
+    ###########################################################
 
     time_past  = datetime.datetime.now() - datetime.timedelta(days=past_days)
     epoch_past = int(datetime.datetime.timestamp(time_past))
