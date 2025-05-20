@@ -9,7 +9,7 @@
 # Author: Mike Lake
 # Date: 2020
 
-# Set here the location of where the script will be installed to.
+# Set here the directory path of where the script will be installed to.
 # The "pbs" directory will be installed under here as well.
 # Do not use a trailing slash here.
 dest="/opt/eresearch/hpc_utilisation"
@@ -19,10 +19,16 @@ dest="/opt/eresearch/hpc_utilisation"
 # The name of the script to modify and install.
 script=check_utilisation.py
 
-function create_venv {
-    # Create a Python virtual env.
-    # /opt/eresearch/virtualenvs needs to already exist and be writable by the user of this script.
-    # chown -R mlake:mlake /opt/eresearch/virtualenvs/hpc_utilisation/
+function create_python_venv {
+    # Create a Python 3.8 virtual env.
+    # The directory /opt/eresearch/virtualenvs needs to already exist 
+    # and be writable by the user of this install script i.e:
+    #   mkdir -p /opt/eresearch/virtualenvs
+    #   chown -R mlake:mlake /opt/eresearch/virtualenvs
+    if [ -d /opt/eresearch/virtualenvs/hpc_utilisation ]; then
+        return
+    fi
+
     pushd /opt/eresearch/virtualenvs
     python3.8 -m venv hpc_utilisation --prompt HPC_Utilisation
     source /opt/eresearch/virtualenvs/hpc_utilisation/bin/activate
@@ -33,7 +39,7 @@ function create_venv {
 }
 
 # Check the public users database is up-to-date with the private one
-# by doing a quick check of the number of entries.  If you are not using 
+# by doing a quick check of the number of entries. If you are not using 
 # this db then comment out this section.
 num1=$(echo 'select count(id) from users;' | sqlite3 users_ldap.db)
 num2=$(echo 'select count(id) from users;' | sqlite3 users_ldap_public.db)
@@ -45,27 +51,27 @@ else
     echo "Number of users in each database is the same. Good."
 fi
 
-# Replace settings with UTS specific values.
-cat $script | \
-sed "s/^from_email = 'YourEmail@example.com'/from_email = 'Mike.Lake@uts.edu.au'/" | \
-sed "s/^mail_server = 'postoffice.example.com'/mail_server = 'postoffice.uts.edu.au'/" > tmp.py
-
-# Now do the install.
-create_venv
-
+# Create the required destination directories.
 sudo mkdir -p ${dest}
 sudo chgrp mlake ${dest}
 sudo chmod 775 ${dest}
 
-#mkdir -p ${dest}/pbs
+mkdir -p ${dest}/pbs
 #cp pbs/pbs.py ${dest}/pbs
 #cp pbs/_pbs.so ${dest}/pbs
 #cp pbs/pbsutils.py ${dest}/pbs
 
+# Install the main python script, replacing settings with UTS specific values.
+cat $script | \
+sed "s/^from_email = 'YourEmail@example.com'/from_email = 'Mike.Lake@uts.edu.au'/" | \
+sed "s/^mail_server = 'postoffice.example.com'/mail_server = 'postoffice.uts.edu.au'/" > tmp.py
 mv tmp.py ${dest}/check_utilisation.py
-cp users_ldap_public.db ${dest}
 # This will allow any user to run the script.
 chmod ugo+x ${dest}/check_utilisation.py
 chmod o-x ${dest}/check_utilisation.py
-rm -f tmp.py
+
+# Create the python virtual environment.
+create_python_venv
+
+cp users_ldap_public.db ${dest}
 
